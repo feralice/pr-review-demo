@@ -1,0 +1,9 @@
+{
+  "name": "pr-review-demo",
+  "version": "1.0.0",
+  "description": "Projeto de demonstração: review automático de IA em Pull Requests",
+  "private": true,
+  "scripts": {
+    "test": "node --test"
+  }
+}
