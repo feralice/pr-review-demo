@@ -1,136 +1,133 @@
 # pr-review-demo
 
-Projeto pequeno pra mostrar, ao vivo, **review automático de IA num Pull Request**, em **duas rodadas**:
+Projeto pequeno (Node.js, sem dependências) pra demonstrar **como dar contexto a uma IA que revisa código**, ao vivo, na **CLI** (Claude Code). A mesma ideia vale pra qualquer CLI de IA.
 
-1. **Rodada 1:** a IA revisa só com o diff. Sem regras do time e sem requisito.
-2. **Rodada 2:** você dá contexto (regras no `CLAUDE.md`, a skill `clean-code` e o requisito numa **issue** ligada ao PR), faz um push, e a IA revisa de novo.
+Duas rodadas, mesmo código, mesma IA:
+1. **Rodada 1:** a IA revisa só o diff (o `CLAUDE.md` é o mínimo, sem skills).
+2. **Rodada 2:** você dá contexto (regras do time, 3 skills e a issue do requisito) e ela revisa de novo com o comando `/review`.
 
-A turma compara as duas. É a prova de que **contexto vale mais que prompt**. A IA é um pré-review: ela acelera, e o humano decide.
+## Subir pro GitHub
 
-## Subir pro GitHub (copie e cole)
-
-Precisa de: `git`, Node.js 18+ e o GitHub CLI (`gh`). Faça `gh auth login` uma vez.
+Precisa de `git`, Node.js 18+ e o GitHub CLI (`gh`). Faça `gh auth login` uma vez.
 
 ```bash
 unzip pr-review-demo.zip && cd pr-review-demo
 git init -b main
 git add . && git commit -m "chore: projeto de demonstração"
-gh repo create pr-review-demo --private --source=. --remote=origin --push
-bash demo/create-issue.sh        # cria a issue #1 (o requisito)
-bash demo/prepare-branch.sh      # empurra a branch feat/ajuste-frete, sem abrir o PR
+gh repo create pr-review-demo --public --source=. --remote=origin --push
+bash demo/create-issue.sh        # cria a issue #1 (o requisito). Precisa ser a primeira
+bash demo/prepare-branch.sh      # cria e empurra a branch feat/ajuste-frete (o "PR")
 ```
 
-Depois, no GitHub (uma vez):
-1. **App do Claude:** instale em github.com/apps/claude, só neste repositório (ou rode `/install-github-app` no Claude Code).
-2. **Segredo:** `gh secret set ANTHROPIC_API_KEY` (ele pede a chave; não cole no código).
-3. **Actions:** confira que estão habilitadas (aba Actions).
+O repositório fica **público**, porque o CodeRabbit só é gratuito assim (o código da demo é inofensivo). Se você já criou privado: `gh repo edit --visibility public --accept-visibility-change-consequences`.
 
-Deixe o repositório **privado** nos ensaios. Pra turma abrir pelo QR, torne **público** só na hora: Settings > General > Danger Zone > Change visibility.
+## Demo local (a principal)
 
-## O que tem aqui
+Na pasta do projeto, na branch do PR: `git checkout feat/ajuste-frete`.
 
-| Arquivo | Pra quê |
-|---|---|
-| `src/frete.js`, `src/checkout.js` | Código da "loja": frete e total do pedido |
-| `test/checkout.test.js` | Testes (passam na `main`, falham depois do PR) |
-| `CLAUDE.md` e `.github/copilot-instructions.md` | **Versão mínima** (rodada 1): só diz o que é o projeto |
-| `demo/context/CLAUDE.md` e `copilot-instructions.md` | **Versão completa** (rodada 2): as 4 regras do time (a 1ª: nomes de função em snake_case) |
-| `demo/context/pr-description-com-requisito.md` | Descrição do PR **com** `Closes #1`, que liga a issue do requisito (rodada 2) |
-| `demo/context/issue-requisito.md` | Título e corpo da **issue #1** (o requisito), que você cria uma vez no GitHub |
-| `demo/pr-description.md` | Descrição do PR **sem** requisito (rodada 1) |
-| `demo/pr-change/src/` | Os arquivos "depois" do PR (`frete.js` e `pedidos.js`) |
-| `demo/open-demo-pr.sh` | Abre o PR de demonstração com um comando |
-| `templates/arquivo-de-instrucoes.md` | Modelo do arquivo de instruções do time (o que vai por e-mail) |
-| `demo/context/skills/clean-code/` | **Skill de exemplo** (o 2º contexto), pra achar code smells. Fica fora de `.claude/skills/` de propósito, pra não ativar na rodada 1. Na rodada 2 você cria o arquivo `.claude/skills/clean-code/SKILL.md` na branch do PR (Add file > Create new file) e cola o conteúdo. A documentação não confirma que a Action carrega skills: **teste na véspera** (se não carregar, cole as 4 linhas dela no `CLAUDE.md`) |
-| `.github/workflows/ai-review.yml` | **O review automático** (GitHub Action com Claude) |
-| `.github/workflows/ci.yml` | CI com os testes |
-| `.github/pull_request_template.md` | Template que pede o requisito no PR |
+**Rodada 1: só o diff**
+```bash
+claude
+> Revise o diff desta branch contra a main: bugs e code smells.
+```
+Anote o que ela **não** apontou. Rode `npm test` pra mostrar que os testes falham (1 passa, 2 falham).
+
+**Rodada 2: com contexto**
+1. Saia da sessão (`/exit`).
+2. A turma escolhe a regra 1 (voto de mão): **snake_case**, **JSDoc em toda função** ou **aspas duplas**. Se ninguém escolher, vai de snake_case.
+3. `bash demo/add-context.sh` copia o `CLAUDE.md` completo, as 3 skills e o comando `/review`.
+4. Um voluntário digita a regra escolhida na linha 1 do `CLAUDE.md` (no seu editor).
+5. Abra uma sessão **nova**: `claude`. Rode `/review 1` (o `1` é a issue com o requisito).
+6. Compare com a rodada 1.
+
+Pra repetir o ensaio: `bash demo/reset-context.sh` (volta pra rodada 1).
+
+### Quem pega o quê
+
+| Contexto | O que é | Pega |
+|---|---|---|
+| **1 · Regras do time** (`CLAUDE.md`) | O que só o time decide | `console.log`, função sem teste, snake_case |
+| **2 · Skills** (`.claude/skills/`) | `negocio`, `bugs`, `legibilidade` | números soltos, nome sem verbo, `> 100`, a ordem dos parâmetros |
+| **3 · Requisito** | A issue #1 do GitHub (`/review 1`) | `> 100` contra "100 ou mais" |
+| **4 · Repositório** | A skill `bugs` usa Grep pra achar quem chama | O `checkout.js` que ficou pra trás |
 
 ## O que está plantado no PR
 
-O PR muda o `src/frete.js` (3 linhas) e cria o `src/pedidos.js`.
+| # | Problema | Onde | Rodada 1 (só o diff) | Rodada 2: quem pega |
+|---|---|---|---|---|
+| 1 | A ordem dos parâmetros trocou: `calcularFrete(total, pesoKg)` virou `(pesoKg, total)`, mas o `checkout.js` ainda chama na ordem antiga | `src/checkout.js`, **fora do diff** | Os testes pegam. A IA só pega se for buscar quem chama | Skill **bugs** |
+| 2 | O ticket diz "100 **ou mais**", o código usa `> 100` | `src/frete.js` | **Não tem como saber** sem o requisito | Skill **negocio**, com a issue |
+| 3 | Os números `100` e `5` soltos | `src/frete.js` | Pode apontar | Skill **legibilidade** |
+| 4 | O nome `totais` não começa com verbo | `src/pedidos.js` | Provavelmente não | Skill **legibilidade** |
+| 5 | O comentário "Frete grátis a partir de R$ 100" sumiu | `src/frete.js` | Pode apontar | Skill **legibilidade** |
+| 6 | `console.log` no código | `src/pedidos.js` | Provavelmente não | **CLAUDE.md** (regra 3) |
+| 7 | As funções usam camelCase, e o time usa snake_case | `src/*.js` | **Não tem como saber** | **CLAUDE.md** (regra 1) |
+| 8 | A função nova não tem teste | `src/pedidos.js` | Provavelmente não | **CLAUDE.md** (regra 2) |
 
-| # | Problema | Onde | Tipo | Rodada 1 (só o diff) | Rodada 2: o contexto que pega |
-|---|---|---|---|---|---|
-| 1 | A ordem dos parâmetros trocou: `calcularFrete(total, pesoKg)` virou `(pesoKg, total)`, mas o `checkout.js` ainda chama na ordem antiga, e o frete sai errado | `src/checkout.js`, **fora do diff** | Bug | Os testes pegam. A IA só pega se por conta própria for buscar quem chama | **4 · Repositório**: a regra 4 manda listar quem chama (bônus: só explicamos) |
-| 2 | O ticket diz "100 **ou mais**", o código usa `> 100` (o pedido de exatamente R$ 100 paga frete) | `src/frete.js` | Regra de negócio | **Não tem como saber** sem o requisito | **3 · Requisito**: lê a issue #1 ligada ao PR |
-| 3 | Os números `100` e `5` soltos no código | `src/frete.js` | Smell | Pode apontar por conta própria | **2 · Skill clean-code** (números mágicos) |
-| 4 | O nome `totais` não começa com verbo | `src/pedidos.js` | Smell | Provavelmente não aponta | **2 · Skill clean-code** (nomes) |
-| 5 | O comentário "Frete grátis a partir de R$ 100" sumiu | `src/frete.js` | Smell | Pode apontar | **2 · Skill clean-code** (comentário que sumiu) |
-| 6 | `console.log` no código | `src/pedidos.js` | Padrão do time | Provavelmente não aponta | **1 · Regras do time** (regra 3) |
-| 7 | As funções usam camelCase (`calcularFrete`, `calcularTotal`), e o time usa snake_case | `src/frete.js`, `src/checkout.js` | Padrão do time | **Não tem como saber** sem a regra | **1 · Regras do time** (regra 1: snake_case) |
-| 8 | A função nova não tem teste | `src/pedidos.js` | Padrão do time | Provavelmente não aponta | **1 · Regras do time** (regra 2) |
+A IA não é determinística: o que ela devolve só aparece no ensaio. Os itens 2, 3 e 7 são os mais seguros pra mostrar a diferença, porque sem contexto ela não tem como saber.
 
-A IA não é determinística: **teste na véspera e guarde os prints** das duas rodadas. Os itens 2, 3 e 7 são os mais seguros pra mostrar a diferença, porque sem contexto a IA não tem como saber.
+## O que tem aqui
 
-## Setup (uma vez, ~10 min)
+| Arquivo | O que é |
+|---|---|
+| `src/frete.js`, `src/checkout.js`, `test/` | Código "da loja": frete e total do pedido |
+| `CLAUDE.md` e `.claude/settings.json` | A base (rodada 1): regras mínimas e permissões, sem skills |
+| `demo/pr-change/src/` | Os arquivos "depois" do PR (`frete.js` e `pedidos.js`) |
+| `demo/context/` | **O contexto** (rodada 2): `CLAUDE.md` completo e `.claude/` com as skills e o `/review` |
+| `demo/add-context.sh`, `demo/reset-context.sh` | Dá e tira o contexto |
+| `demo/create-issue.sh`, `demo/prepare-branch.sh`, `demo/open-demo-pr.sh` | Cria a issue #1, a branch do PR e abre o PR |
+| `demo/context/issue-requisito.md` | O texto da issue #1 |
+| `templates/arquivo-de-instrucoes.md` | Modelo do arquivo de instruções (vai por e-mail) |
+| `.github/workflows/ai-review.yml` | O mesmo review, automático (capítulo 5) |
 
-1. **Crie um repositório vazio no GitHub** (de preferência privado) e suba este projeto na branch `main`:
-   ```bash
-   git init -b main
-   git add . && git commit -m "chore: projeto de demonstração"
-   gh repo create pr-review-demo --private --source=. --push
-   ```
-2. **Instale o app do Claude no repositório.** O jeito rápido: abra o Claude Code dentro do projeto e rode `/install-github-app`. Ele instala o app e cria o segredo `ANTHROPIC_API_KEY`. Ou instale em https://github.com/apps/claude e crie o segredo à mão em Settings → Secrets and variables → Actions.
-3. **Abra o PR da rodada 1:**
-   ```bash
-   bash demo/open-demo-pr.sh
-   ```
-   (Sem o `gh`: crie a branch `feat/ajuste-frete`, copie o conteúdo de `demo/pr-change/src/` pra dentro de `src/`, suba e abra o PR colando `demo/pr-description.md` na descrição.)
-   **Jeito visual (recomendado pra apresentar):** rode `bash demo/prepare-branch.sh` na véspera. Ele só empurra a branch `feat/ajuste-frete`, **sem abrir o PR**. No dia, no GitHub: Pull requests → **Compare & pull request** → cole o conteúdo de `demo/pr-description.md` na descrição → Create pull request. O review começa sozinho.
-4. **Crie a issue #1** no repositório (aba Issues > New issue), com o título e o corpo de `demo/context/issue-requisito.md`. Ela precisa ser a primeira issue (ou ajuste o `Closes #1` na descrição do PR).
-5. Aba **Actions**: o workflow "AI Review" roda sozinho. Em 1 a 3 minutos aparecem os comentários, e o CI fica vermelho por causa dos testes.
+## Automático (mostrado funcionando, no capítulo 5): CodeRabbit
 
-## Roteiro da demo
+É um **app pronto**: instala em uns 2 minutos, **sem workflow e sem chave**, e revisa todo PR sozinho. É gratuito em **repositório público** (em privado, só um teste de 14 dias). Confira o plano em coderabbit.ai/pricing.
 
-**Rodada 1 (~3 min, bloco do PR):**
-1. Mostre o diff e peça palpites: o que a IA vai achar? (A turma levanta a mão por categoria.)
-2. Mostre a aba Actions rodando e depois os comentários.
-3. Pergunte pra turma em cada comentário: aplica, descarta ou discute? (mão levantada, sem cartões)
-4. **Anote o que ela NÃO apontou.** Isso é o que a rodada 2 vai comparar.
+**Montar (uma vez):**
+1. Deixe o repositório **público** (Settings > General > Danger Zone > Change visibility). O código da demo é inofensivo.
+2. Entre em **app.coderabbit.ai/login** com a conta do GitHub, adicione os repositórios e escolha só o `pr-review-demo`.
+3. Nada mais: ele já lê o `CLAUDE.md` da raiz (a documentação diz que detecta `CLAUDE.md`, `AGENTS.md` e `copilot-instructions.md` sozinho).
 
-**Rodada 2 (~2,5 min, bloco de contexto, "Sua vez"):**
-1. **Deixe a regra 1 aberta pra turma.** Faça um voto de mão entre 3 regras que este código mostra na hora: **snake_case** (`calcularFrete` vira `calcular_frete`), **JSDoc em toda função** e **aspas duplas** (o código usa simples). Um voluntário digita a escolhida na linha 1 do `CLAUDE.md`. Se ninguém escolher, vai de snake_case. Evite regras sem o que pegar neste código (funções com até N linhas, mensagens de erro em português). SOLID é a mais ousada, mas menos previsível.
-2. No GitHub, abra o `CLAUDE.md` **na branch do PR** (botão de editar) e escreva as regras. Se a turma não ditar, cole o conteúdo de `demo/context/CLAUDE.md`. Faça commit direto na branch.
-3. Crie a skill: na branch do PR, Add file > Create new file, caminho `.claude/skills/clean-code/SKILL.md`, e cole `demo/context/skills/clean-code/SKILL.md`. Faça commit na branch.
-3b. Edite a **descrição do PR** e acrescente `Closes #1` (`demo/context/pr-description-com-requisito.md`). O GitHub mostra a issue ligada ao PR.
-4. O commit dispara o workflow de novo. Em 1 a 3 minutos chegam comentários novos. Siga pros próximos slides enquanto roda.
-5. No slide "Antes e depois do contexto", compare as duas rodadas.
+**Deixar o PR pronto (no ensaio):**
+```bash
+bash demo/open-demo-pr.sh
+```
+Espere uns minutos até o CodeRabbit comentar, tire prints e **deixe o PR aberto**. O script empurra a branch sozinho, se ela ainda não estiver no GitHub.
 
-Editar só a descrição do PR **não** dispara o workflow, por isso o commit é o gatilho. Como são 2 commits (`CLAUDE.md` e a skill), o workflow tem `concurrency` com `cancel-in-progress`: só o último review vale.
+**No dia:** abra o PR no navegador e mostre o resumo e os comentários nas linhas. Se quiser rodar de novo, comente `@coderabbitai full review` no PR.
+
+**Bônus (só se ensaiar):** coloque o `CLAUDE.md` completo (`demo/context/CLAUDE.md`) na **`main`** e comente `@coderabbitai full review`. Em repositório público, ele aplica só a configuração da branch base, então a regra precisa estar na `main`. Não confirmei se o `CLAUDE.md` segue essa mesma regra de branch: teste antes de prometer.
+
+Skills e o `/review` são do Claude Code: o CodeRabbit não usa. Quem quiser mais controle, pode montar o próprio pipeline (alternativa abaixo).
+
+### Alternativa: pipeline próprio (GitHub Action com Claude)
+
+O workflow `.github/workflows/ai-review.yml` roda o Claude Code em todo PR. Precisa de: o app do Claude (https://github.com/apps/claude), o segredo com o token da assinatura (`claude setup-token` e `gh secret set CLAUDE_CODE_OAUTH_TOKEN`; ou `ANTHROPIC_API_KEY`, trocando a linha do workflow) e um PR aberto. Não confirmei que a Action carrega as skills. Use CLI em Actions só em repositório seu.
+
+## Refazer o ensaio do zero
+
+```bash
+git checkout main
+git branch -D feat/ajuste-frete && git push origin --delete feat/ajuste-frete
+bash demo/prepare-branch.sh
+```
+Feche o PR antigo no GitHub antes. Entre um ensaio e outro, `bash demo/reset-context.sh` volta a pasta pra rodada 1.
 
 ## Plano B
 
-| Situação | O que fazer |
-|---|---|
-| Sem chave de API | Review do Copilot: Settings → Rules → Rulesets → nova regra pra branch `main` e ative a opção de pedir review do Copilot automaticamente (confira o nome exato na tela, a interface muda). Precisa de plano do Copilot com code review. O Copilot lê `.github/copilot-instructions.md` da branch base do PR, então a versão completa tem que entrar na `main` antes |
-| Sem internet na sala | Use os prints das duas rodadas, tirados na véspera |
-| A IA não comentou nada | Mostre os prints da véspera e fale do que ela costuma achar |
-
-## Cuidados
-
-- **Teste na véspera.** O review pode demorar e a interface do GitHub muda.
-- **Confirme** se a Action lê o `CLAUDE.md` da branch do PR (o esperado, pelo checkout do workflow) ou só o da `main`. Se for só o da `main`, a regra tem que entrar na `main` antes da rodada 2.
-- **Custo:** cada execução gasta tokens da API e minutos do Actions. Este projeto é minúsculo, então o gasto é baixo.
-- **PR vindo de fork não recebe o segredo.** Faça a demo com branch dentro do mesmo repositório.
-- **Confira os nomes dos parâmetros** da action (`anthropic_api_key`, `prompt`, `claude_args`, ferramentas liberadas) na documentação oficial na semana do workshop: https://code.claude.com/docs/en/github-actions
-- Não rode isso em repositório do trabalho sem aprovação da empresa. O código vai pra um LLM.
+- A CLI não responde ou demora: use os prints da véspera (rodada 1 e rodada 2).
+- A skill não carrega: cole as linhas dela no `CLAUDE.md` e rode a rodada 2 assim.
+- O `/review` não aparece: confirme que abriu uma sessão **nova** depois do `add-context.sh` e que `.claude/commands/review.md` existe. Como alternativa, peça: "Aplique as skills negocio, bugs e legibilidade ao diff da branch contra a main".
+- Sem o `gh`: crie a issue pelo site e, na rodada 2, cole o requisito no pedido.
 
 ## Checklist da véspera
 
-- [ ] Repositório criado (privado), projeto na `main`, app do Claude instalado, segredo `ANTHROPIC_API_KEY` criado
-- [ ] Branch `feat/ajuste-frete` empurrada (`demo/prepare-branch.sh`), **sem PR aberto**
-- [ ] **Rodada 1** feita (só o diff): comentários chegaram, print tirado, anotado o que a IA não apontou
-- [ ] CI vermelho por causa dos testes (print)
-- [ ] **Rodada 2** feita (regras + requisito): print tirado, comparado com a rodada 1
-- [ ] Confirmado se a Action lê o `CLAUDE.md` da branch do PR
-- [ ] Issue #1 criada, e a Action leu a issue ligada ao PR (`gh issue view`)
-- [ ] Skill `clean-code` carregou na Action? Se não, o primeiro suspeito é a lista `--allowedTools` (a ferramenta `Skill`); se ainda assim não carregar, cole as 4 linhas dela no `CLAUDE.md`
-- [ ] Testado com 2 regras ditadas (ex.: siga SOLID, funções com até 20 linhas) pra saber o que a IA devolve
-- [ ] PR da rodada 1 reaberto ou recriado limpo pro dia (pra a rodada 2 acontecer ao vivo)
-- [ ] Notebook logado no GitHub, com as abas do PR e do Actions já abertas
-- [ ] Internet testada na sala (ou hotspot do celular como reserva)
-
-## Trocando pelas regras do seu time
-
-Edite `demo/context/CLAUDE.md` (e copie pra `demo/context/copilot-instructions.md`). O Copilot só lê os primeiros 4.000 caracteres do arquivo e usa a versão da branch de destino do PR.
+- [ ] Repositório criado (público), issue #1 criada, branch `feat/ajuste-frete` empurrada
+- [ ] `claude` abre na pasta e pede só o que é esperado (primeiro uso pede confiar na pasta)
+- [ ] Rodada 1 feita, com prints
+- [ ] Rodada 2 feita (`add-context.sh`, sessão nova, `/review 1`), com prints
+- [ ] Testadas as 3 regras da lista (snake_case, JSDoc, aspas duplas)
+- [ ] As skills carregaram (o review cita negocio, bugs e legibilidade)
+- [ ] Repositório público, CodeRabbit instalado e PR aberto com o review feito, com prints (o automático do capítulo 5)
+- [ ] `reset-context.sh` rodado pra começar o dia limpo

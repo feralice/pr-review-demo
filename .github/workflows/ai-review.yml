@@ -27,7 +27,7 @@ jobs:
 
       - uses: anthropics/claude-code-action@v1
         with:
-          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           prompt: |
             REPO: ${{ github.repository }}
             PR NUMBER: ${{ github.event.pull_request.number }}
@@ -37,6 +37,8 @@ jobs:
             Se a descrição citar uma issue (ex.: Closes #1), leia com gh issue view e use como requisito.
 
             Procure bugs e code smells.
+            Se existirem skills na pasta .claude/skills (negocio, bugs, legibilidade),
+            aplique-as ao diff, uma por vez, como no comando /review, e junte tudo no resumo.
 
             Formato: comente cada achado inline, no arquivo e na linha. No fim,
             publique um resumo em tabela com arquivo, linha, tipo (bug ou smell),

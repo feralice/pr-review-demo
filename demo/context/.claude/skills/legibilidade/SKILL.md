@@ -1,6 +1,6 @@
 ---
-name: clean-code
-description: Use ao revisar PR pra achar code smells: números soltos, nomes ruins, função que faz coisa demais.
+name: legibilidade
+description: Use ao revisar PR pra achar código difícil de ler: números soltos, nomes ruins, função grande, comentário que sumiu.
 ---
 
 Procure estes sinais e comente cada um, com a linha:
@@ -10,4 +10,4 @@ Procure estes sinais e comente cada um, com a linha:
 3. Função que faz mais de uma coisa: sugira dividir.
 4. Comentário que sumiu ou que explica o óbvio.
 
-Não repita o que o requisito ou as regras do time já cobrem.
+Não repita o que o requisito, os bugs ou as regras do time já cobrem.
