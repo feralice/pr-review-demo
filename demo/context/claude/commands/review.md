@@ -9,7 +9,7 @@ Você coordena o review da branch atual contra a main.
 O que mudou (diff): !`git diff main...HEAD`
 
 Além do diff, use este contexto:
-- A task: se recebeu um número ($ARGUMENTS), leia com `gh issue view $ARGUMENTS`. É o pedido do cliente.
+- A task: se recebeu um número ($ARGUMENTS), leia com `gh issue view $ARGUMENTS --json title,body`. É o pedido do cliente.
 - As regras do time: o CLAUDE.md.
 - O repositório: abra outros arquivos quando precisar, como os testes e quem usa o código que mudou.
 
