@@ -1,7 +1,7 @@
 ---
 description: Revisa o diff desta branch com as skills do time e junta tudo numa tabela
 argument-hint: [número da issue com o requisito]
-allowed-tools: Bash(git diff:*), Bash(gh issue view:*), Read, Grep, Glob
+allowed-tools: Bash(git diff:*), Bash(gh issue view:*), Bash(npm test:*), Read, Grep, Glob
 ---
 
 Você coordena o review da branch atual contra a main.
