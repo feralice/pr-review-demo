@@ -37,7 +37,7 @@ bash demo/rodada1-mcp.sh
 > Revise este PR: bugs e code smells. <link do PR>
 ```
 
-O script abre o `claude` numa **pasta vazia**, sem Read/Grep/Bash, só com o MCP do GitHub e com as ferramentas que abrem arquivo do repo (`get_file_contents`, `search_code`) bloqueadas. Sobra o `pull_request_read`: o diff. Quando ela pedir permissão pra ele, aprove e mostre na tela que ela foi buscar só o diff.
+O script abre o `claude` numa **pasta vazia**, sem Read/Grep/Bash, só com o MCP do GitHub em modo leitura e expondo uma única ferramenta, o `pull_request_read`: o diff. Quando ela pedir permissão pra ele, aprove e mostre na tela que ela foi buscar só o diff.
 
 Anote o que ela **não** apontou. Rode `npm test` pra mostrar que os testes falham (1 passa, 2 falham).
 
