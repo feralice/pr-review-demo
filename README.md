@@ -104,11 +104,11 @@ A IA não é determinística: o que ela devolve só aparece no ensaio. Os itens 
 2. Entre em **app.coderabbit.ai/login** com a conta do GitHub, adicione os repositórios e escolha só o `pr-review-demo`.
 3. Nada mais: ele já lê o `CLAUDE.md` da raiz (a documentação diz que detecta `CLAUDE.md`, `AGENTS.md` e `copilot-instructions.md` sozinho).
 
-**Deixar o PR pronto (no ensaio):**
+**No dia (ao vivo):** ative o CodeRabbit no repo (`github.com/settings/installations` > CodeRabbit > Configure > adicione o `pr-review-demo` > Save) e abra o PR:
 ```bash
 bash demo/open-demo-pr.sh
 ```
-Espere uns minutos até o CodeRabbit comentar, tire prints e **deixe o PR aberto**. O script empurra a branch sozinho, se ela ainda não estiver no GitHub.
+O script abre o PR no navegador. O CodeRabbit leva de 2 a 5 minutos pra comentar. No ensaio, tire prints pro plano B e depois feche o PR, pra rodar de novo.
 
 **No dia:** abra o PR no navegador e mostre o resumo e os comentários nas linhas. Se quiser rodar de novo, comente `@coderabbitai full review` no PR.
 
