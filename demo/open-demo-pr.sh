@@ -10,11 +10,11 @@ fi
 # Commit novo a cada rodada (mesmo conteúdo): o CodeRabbit marca o commit, e
 # um commit já revisado num ensaio deixaria o PR com o check "Review completed".
 NOVO="$(git commit-tree "feat/ajuste-frete^{tree}" -p "feat/ajuste-frete^" \
-  -m "feat: ajuste no frete e totais por lista de pedidos")"
+  -m "feat: frete grátis para compras grandes")"
 git update-ref refs/heads/feat/ajuste-frete "$NOVO"
 git push -q --force origin feat/ajuste-frete
 URL="$(gh pr create --base main --head feat/ajuste-frete \
-  --title "feat: ajuste no frete e totais por lista de pedidos" \
+  --title "feat: frete grátis para compras grandes" \
   --body-file demo/pr-description.md)"
 echo "$URL"
 # WSL não tem navegador próprio: abre no do Windows

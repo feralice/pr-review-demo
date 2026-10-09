@@ -1,7 +1,7 @@
 Título da issue #1:
-Frete grátis para pedidos de R$ 100 ou mais
+Frete grátis para compras acima de R$ 200
 
 Corpo da issue:
 ## Requisito
-- Frete grátis para pedidos de R$ 100 ou mais
-- Abaixo disso, R$ 5 por kg, com frete mínimo de R$ 15
+- Compras acima de R$ 200: frete grátis
+- Até R$ 200: frete de R$ 10

@@ -35,6 +35,6 @@ cd "$VAZIA"
 # --strict-mcp-config: só o MCP do GitHub deste arquivo, nenhum outro seu
 # --permission-mode default: pede permissão antes do pull_request_read
 # X-MCP-Tools: o servidor só expõe o pull_request_read; get_commit e
-# search_commits devolveriam o patch do checkout.js
+# search_commits leriam código fora do diff
 claude --setting-sources project,local --tools "" --permission-mode default \
   --strict-mcp-config --mcp-config "$VAZIA/.mcp-rodada1.json"

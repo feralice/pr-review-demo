@@ -41,7 +41,7 @@ O link é o do PR da `feat/frete-pedidos`, aberto com o CodeRabbit **desativado*
 
 O script abre o `claude` numa **pasta vazia**, sem Read/Grep/Bash, só com o MCP do GitHub em modo leitura e expondo uma única ferramenta, o `pull_request_read`: o diff. Quando ela pedir permissão pra ele, aprove e mostre na tela que ela foi buscar só o diff.
 
-Anote o que ela **não** apontou. Rode `npm test` pra mostrar que os testes falham (1 passa, 2 falham).
+Anote o que ela **não** apontou. O `npm test` passa: o código funciona, só não faz o que o cliente pediu.
 
 **Plano B (sem rede ou sem MCP):** `bash demo/rodada1.sh`, que é `git diff main...HEAD | claude -p "Revise este diff: bugs e code smells." --tools ""`. Mesmo resultado, com o diff local.
 
@@ -57,25 +57,22 @@ Pra repetir o ensaio: `bash demo/reset-context.sh` (volta pra rodada 1).
 
 | Contexto | O que é | Pega |
 |---|---|---|
-| **1 · Regras do time** (`CLAUDE.md`) | O que só o time decide | `console.log`, função sem teste, snake_case |
-| **2 · Skills** (`.claude/skills/`) | `negocio`, `bugs`, `legibilidade` | números soltos, nome sem verbo, `> 100`, a ordem dos parâmetros |
-| **3 · Requisito** | A issue #1 do GitHub (`/review 1`) | `> 100` contra "100 ou mais" |
-| **4 · Repositório** | A skill `bugs` usa Grep pra achar quem chama | O `checkout.js` que ficou pra trás |
+| **1 · Regras do time** (`CLAUDE.md`) | O que só o time decide | `console.log`, snake_case |
+| **2 · Skills** (`.claude/skills/`) | `negocio`, `bugs`, `legibilidade` | número solto, valor contra o requisito |
+| **3 · Requisito** | A issue #1 do GitHub (`/review 1`) | `100` no código contra "acima de R$ 200" na issue |
 
 ## O que está plantado no PR
 
-| # | Problema | Onde | Rodada 1 (só o diff) | Rodada 2: quem pega |
-|---|---|---|---|---|
-| 1 | A ordem dos parâmetros trocou: `calcularFrete(total, pesoKg)` virou `(pesoKg, total)`, mas o `checkout.js` ainda chama na ordem antiga | `src/checkout.js`, **fora do diff** | Os testes pegam. A IA só pega se for buscar quem chama | Skill **bugs** |
-| 2 | O ticket diz "100 **ou mais**", o código usa `> 100` | `src/frete.js` | **Não tem como saber** sem o requisito | Skill **negocio**, com a issue |
-| 3 | Os números `100` e `5` soltos | `src/frete.js` | Pode apontar | Skill **legibilidade** |
-| 4 | O nome `totais` não começa com verbo | `src/pedidos.js` | Provavelmente não | Skill **legibilidade** |
-| 5 | O comentário "Frete grátis a partir de R$ 100" sumiu | `src/frete.js` | Pode apontar | Skill **legibilidade** |
-| 6 | `console.log` no código | `src/pedidos.js` | Provavelmente não | **CLAUDE.md** (regra 3) |
-| 7 | As funções usam camelCase, e o time usa snake_case | `src/*.js` | **Não tem como saber** | **CLAUDE.md** (regra 1) |
-| 8 | A função nova não tem teste | `src/pedidos.js` | Provavelmente não | **CLAUDE.md** (regra 2) |
+O PR muda uma função só (`src/frete.js`): compra acima de R$ 100 passa a ter frete grátis.
 
-A IA não é determinística: o que ela devolve só aparece no ensaio. Os itens 2, 3 e 7 são os mais seguros pra mostrar a diferença, porque sem contexto ela não tem como saber.
+| # | Problema | Rodada 1 (só o diff) | Rodada 2: quem pega |
+|---|---|---|---|
+| 1 | O cliente pediu frete grátis **acima de R$ 200**, e o código usa **100** | **Não tem como saber**: 100 parece um número normal | Skill **negocio**, com a issue |
+| 2 | `console.log` esquecido | Costuma apontar (o ESLint também pega) | **CLAUDE.md** (regra 3) |
+| 3 | `calcularFrete` em camelCase, e o time usa snake_case | **Não tem como saber** | **CLAUDE.md** (regra 1) |
+| 4 | O número `100` solto, sem nome | Pode apontar | Skill **legibilidade** |
+
+A IA não é determinística: o que ela devolve só aparece no ensaio. Os itens 1 e 3 são os que mostram a diferença, porque sem contexto ela não tem como saber.
 
 ## O que tem aqui
 
@@ -83,7 +80,7 @@ A IA não é determinística: o que ela devolve só aparece no ensaio. Os itens 
 |---|---|
 | `src/frete.js`, `src/checkout.js`, `test/` | Código "da loja": frete e total do pedido |
 | `CLAUDE.md` e `.claude/settings.json` | A base (rodada 1): regras mínimas e permissões, sem skills |
-| `demo/pr-change/src/` | Os arquivos "depois" do PR (`frete.js` e `pedidos.js`) |
+| `demo/pr-change/src/` | O arquivo "depois" do PR (`frete.js`) |
 | `demo/context/` | **O contexto** (rodada 2): `CLAUDE.full.md` e `claude/` com as skills e o `/review`. Os nomes são sem ponto de propósito, pra nenhuma ferramenta ler isso antes da hora |
 | `demo/rodada1-mcp.sh` | Rodada 1 pelo link do PR: pasta vazia, só o MCP do GitHub, só o diff |
 | `demo/rodada1.sh`, `demo/rodada2.sh` | Rodada 1 com o diff local (plano B) e rodada 2 |
@@ -142,7 +139,7 @@ Feche o PR antigo no GitHub antes. Entre um ensaio e outro, `bash demo/reset-con
 - [ ] Repositório criado (público), issue #1 criada, branch `feat/ajuste-frete` empurrada
 - [ ] `claude` abre na pasta e pede só o que é esperado (primeiro uso pede confiar na pasta)
 - [ ] `GITHUB_PAT` criado e exportado; `bash demo/rodada1-mcp.sh` abre e o `pull_request_read` aparece
-- [ ] Rodada 1 feita pelo link do PR (2 vezes, sessão nova), sem citar o `checkout.js`, com prints
+- [ ] Rodada 1 feita pelo link do PR (2 vezes, sessão nova), sem citar o R$ 200, com prints
 - [ ] Plano B testado: `bash demo/rodada1.sh`
 - [ ] Rodada 2 feita (`add-context.sh`, `rodada2.sh`, `/review 1`), com prints
 - [ ] Testadas as 3 regras da lista (snake_case, JSDoc, aspas duplas)

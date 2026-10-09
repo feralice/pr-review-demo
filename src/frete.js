@@ -1,9 +1,5 @@
-// Frete grátis a partir de R$ 100
-function calcularFrete(total, pesoKg) {
-  if (total >= 100) {
-    return 0;
-  }
-  return pesoKg * 5;
+function calcularFrete(total) {
+  return 10;
 }
 
 module.exports = { calcularFrete };

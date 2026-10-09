@@ -1,8 +1,9 @@
-function calcularFrete(pesoKg, total) {
+function calcularFrete(total) {
+  console.log(total);
   if (total > 100) {
     return 0;
   }
-  return pesoKg * 5;
+  return 10;
 }
 
 module.exports = { calcularFrete };

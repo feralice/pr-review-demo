@@ -7,6 +7,6 @@ git checkout main
 git checkout -b feat/ajuste-frete
 cp -r demo/pr-change/src/. src/
 git add src
-git commit -m "feat: ajuste no frete e totais por lista de pedidos"
+git commit -m "feat: frete grátis para compras grandes"
 git push -u origin feat/ajuste-frete
 git checkout main

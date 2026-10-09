@@ -3,7 +3,7 @@
 # Requer: GitHub CLI (gh) logado. A issue precisa ser a primeira do repositório.
 set -e
 gh issue create \
-  --title 'Frete grátis para pedidos de R$ 100 ou mais' \
+  --title 'Frete grátis para compras acima de R$ 200' \
   --body '## Requisito
-- Frete grátis para pedidos de R$ 100 ou mais
-- Abaixo disso, R$ 5 por kg, com frete mínimo de R$ 15'
+- Compras acima de R$ 200: frete grátis
+- Até R$ 200: frete de R$ 10'
