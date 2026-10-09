@@ -4,8 +4,8 @@
 # arquivo local pra ler, e o servidor do MCP só expõe o pull_request_read
 # (somente leitura). Só sobra o que vem do PR: o diff.
 #
-# Usa o PR rascunho da feat/frete-pedidos: o CodeRabbit não revisa rascunho,
-# então o PR não tem comentário dele pra IA copiar.
+# Usa o PR da feat/frete-pedidos, aberto com o CodeRabbit desativado: sem
+# comentário dele pra IA copiar.
 #
 # Token: exporte GITHUB_PAT (fine-grained, só este repo, leitura de PRs e
 # issues). Sem ele, o script tenta o token do gh (gh auth token).
