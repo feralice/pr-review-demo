@@ -37,6 +37,8 @@ bash demo/rodada1-mcp.sh
 > Revise este PR: bugs e code smells. <link do PR>
 ```
 
+O link é o do **PR rascunho** da `feat/frete-pedidos`, com o mesmo diff do PR do CodeRabbit. O CodeRabbit não revisa rascunho, então a IA não tem comentário dele pra copiar. O PR com o review do CodeRabbit fica pro capítulo 5.
+
 O script abre o `claude` numa **pasta vazia**, sem Read/Grep/Bash, só com o MCP do GitHub em modo leitura e expondo uma única ferramenta, o `pull_request_read`: o diff. Quando ela pedir permissão pra ele, aprove e mostre na tela que ela foi buscar só o diff.
 
 Anote o que ela **não** apontou. Rode `npm test` pra mostrar que os testes falham (1 passa, 2 falham).
@@ -91,7 +93,7 @@ A IA não é determinística: o que ela devolve só aparece no ensaio. Os itens 
 | `demo/context/issue-requisito.md` | O texto da issue #1 |
 | `templates/arquivo-de-instrucoes.md` | Modelo do arquivo de instruções (vai por e-mail) |
 | `.github/workflows/ai-review.yml` | O mesmo review numa GitHub Action (só manual, ver abaixo) |
-| `.coderabbit.yaml` | Deixa o review do CodeRabbit em português |
+| `.coderabbit.yaml` | Deixa o review do CodeRabbit em português e não revisa PR rascunho |
 
 ## Automático (mostrado funcionando, no capítulo 5): CodeRabbit
 

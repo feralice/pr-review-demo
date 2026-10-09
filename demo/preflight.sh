@@ -22,6 +22,7 @@ if gh auth status >/dev/null 2>&1; then
   ok "gh logado"
   [ "$(gh issue view 1 --json state --jq .state 2>/dev/null)" = OPEN ] && ok "issue #1 aberta" || erro "issue #1 não está aberta"
   [ "$(gh pr view feat/ajuste-frete --json state --jq .state 2>/dev/null)" = OPEN ] && ok "PR aberto" || erro "PR da feat/ajuste-frete não está aberto"
+  [ "$(gh pr view feat/frete-pedidos --json isDraft --jq .isDraft 2>/dev/null)" = true ] && ok "PR rascunho da rodada 1 aberto" || erro "PR rascunho da feat/frete-pedidos não está aberto"
 else
   erro "gh sem login: gh auth login"
 fi
