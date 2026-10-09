@@ -26,6 +26,9 @@ else
   erro "gh sem login: gh auth login"
 fi
 
+[ -n "$GITHUB_PAT" ] && ok "GITHUB_PAT definido (rodada 1 pelo MCP)" \
+  || echo "  aviso GITHUB_PAT não definido: a rodada 1 vai usar o gh auth token"
+
 sobrando=$(git status --porcelain)
 [ -z "$sobrando" ] && ok "nada pendente no git" || erro "arquivos pendentes no git:"$'\n'"$sobrando"
 

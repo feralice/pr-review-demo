@@ -27,12 +27,21 @@ Na pasta do projeto, na branch do PR: `git checkout feat/ajuste-frete`. Antes de
 
 Os scripts chamam o `claude` com `--setting-sources project,local`, que deixa de fora as configurações, os plugins e o `CLAUDE.md` do seu usuário (`~/.claude`). Assim só entra o contexto do repositório.
 
-**Rodada 1: só o diff**
+**Rodada 1: só o diff (link do PR + MCP do GitHub)**
+
+É o que o pessoal faz no dia a dia: cola o link do PR e o Claude busca o diff pelo MCP do GitHub.
+
 ```bash
-bash demo/rodada1.sh
+export GITHUB_PAT=...            # fine-grained, só este repo, leitura de PRs e issues (sem ele, usa o gh auth token)
+bash demo/rodada1-mcp.sh
+> Revise este PR: bugs e code smells. <link do PR>
 ```
-É o mesmo que `git diff main...HEAD | claude -p "Revise este diff: bugs e code smells." --tools ""`: a IA recebe o diff e não abre nenhum arquivo.
+
+O script abre o `claude` numa **pasta vazia**, sem Read/Grep/Bash, só com o MCP do GitHub e com as ferramentas que abrem arquivo do repo (`get_file_contents`, `search_code`) bloqueadas. Sobra o `pull_request_read`: o diff. Quando ela pedir permissão pra ele, aprove e mostre na tela que ela foi buscar só o diff.
+
 Anote o que ela **não** apontou. Rode `npm test` pra mostrar que os testes falham (1 passa, 2 falham).
+
+**Plano B (sem rede ou sem MCP):** `bash demo/rodada1.sh`, que é `git diff main...HEAD | claude -p "Revise este diff: bugs e code smells." --tools ""`. Mesmo resultado, com o diff local.
 
 **Rodada 2: com contexto**
 1. A turma escolhe a regra 1 (voto de mão): **snake_case**, **JSDoc em toda função** ou **aspas duplas**. Se ninguém escolher, vai de snake_case.
@@ -74,7 +83,8 @@ A IA não é determinística: o que ela devolve só aparece no ensaio. Os itens 
 | `CLAUDE.md` e `.claude/settings.json` | A base (rodada 1): regras mínimas e permissões, sem skills |
 | `demo/pr-change/src/` | Os arquivos "depois" do PR (`frete.js` e `pedidos.js`) |
 | `demo/context/` | **O contexto** (rodada 2): `CLAUDE.full.md` e `claude/` com as skills e o `/review`. Os nomes são sem ponto de propósito, pra nenhuma ferramenta ler isso antes da hora |
-| `demo/rodada1.sh`, `demo/rodada2.sh` | Rodam o `claude` de cada rodada |
+| `demo/rodada1-mcp.sh` | Rodada 1 pelo link do PR: pasta vazia, só o MCP do GitHub, só o diff |
+| `demo/rodada1.sh`, `demo/rodada2.sh` | Rodada 1 com o diff local (plano B) e rodada 2 |
 | `demo/add-context.sh`, `demo/reset-context.sh` | Dá e tira o contexto |
 | `demo/preflight.sh` | Confere se está tudo pronto pra começar |
 | `demo/create-issue.sh`, `demo/prepare-branch.sh`, `demo/open-demo-pr.sh` | Cria a issue #1, a branch do PR e abre o PR |
@@ -120,6 +130,7 @@ Feche o PR antigo no GitHub antes. Entre um ensaio e outro, `bash demo/reset-con
 ## Plano B
 
 - A CLI não responde ou demora: use os prints da véspera (rodada 1 e rodada 2).
+- O MCP do GitHub não conecta (rede, token): `bash demo/rodada1.sh`, com o diff local.
 - A skill não carrega: cole as linhas dela no `CLAUDE.md` e rode a rodada 2 assim.
 - O `/review` não aparece: confirme que abriu uma sessão **nova** (`bash demo/rodada2.sh`) depois do `add-context.sh` e que `.claude/commands/review.md` existe. Como alternativa, peça: "Aplique as skills negocio, bugs e legibilidade ao diff da branch contra a main".
 - Sem o `gh`: crie a issue pelo site e, na rodada 2, cole o requisito no pedido.
@@ -128,7 +139,9 @@ Feche o PR antigo no GitHub antes. Entre um ensaio e outro, `bash demo/reset-con
 
 - [ ] Repositório criado (público), issue #1 criada, branch `feat/ajuste-frete` empurrada
 - [ ] `claude` abre na pasta e pede só o que é esperado (primeiro uso pede confiar na pasta)
-- [ ] Rodada 1 feita, com prints
+- [ ] `GITHUB_PAT` criado e exportado; `bash demo/rodada1-mcp.sh` abre e o `pull_request_read` aparece
+- [ ] Rodada 1 feita pelo link do PR (2 vezes, sessão nova), sem citar o `checkout.js`, com prints
+- [ ] Plano B testado: `bash demo/rodada1.sh`
 - [ ] Rodada 2 feita (`add-context.sh`, `rodada2.sh`, `/review 1`), com prints
 - [ ] Testadas as 3 regras da lista (snake_case, JSDoc, aspas duplas)
 - [ ] As skills carregaram (o review cita negocio, bugs e legibilidade)
