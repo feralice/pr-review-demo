@@ -1,1 +1,4 @@
 language: pt-BR
+reviews:
+  auto_review:
+    drafts: false
