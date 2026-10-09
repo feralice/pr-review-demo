@@ -41,7 +41,7 @@ O link é o do PR da `feat/frete-pedidos`, aberto com o CodeRabbit **desativado*
 
 O script abre o `claude` numa **pasta vazia**, sem Read/Grep/Bash, só com o MCP do GitHub em modo leitura e expondo uma única ferramenta, o `pull_request_read`: o diff. Quando ela pedir permissão pra ele, aprove e mostre na tela que ela foi buscar só o diff.
 
-Anote o que ela **não** apontou. O `npm test` passa: o código funciona, só não faz o que o cliente pediu.
+Anote o que ela **não** apontou. Rode `npm test`: falha (esperava 60, veio 40), por causa do bug 1. O bug 2 o teste não pega.
 
 **Plano B (sem rede ou sem MCP):** `bash demo/rodada1.sh`, que é `git diff main...HEAD | claude -p "Revise este diff: bugs e code smells." --tools ""`. Mesmo resultado, com o diff local.
 
@@ -63,16 +63,17 @@ Pra repetir o ensaio: `bash demo/reset-context.sh` (volta pra rodada 1).
 
 ## O que está plantado no PR
 
-O PR muda uma função só (`src/frete.js`): compra acima de R$ 100 passa a ter frete grátis.
+O PR muda duas linhas de lógica: em `src/frete.js`, compra acima de R$ 100 passa a ter frete grátis; em `src/checkout.js`, o total passa a **tirar** o frete em vez de somar.
 
 | # | Problema | Rodada 1 (só o diff) | Rodada 2: quem pega |
 |---|---|---|---|
-| 1 | O cliente pediu frete grátis **acima de R$ 200**, e o código usa **100** | **Não tem como saber**: 100 parece um número normal | Skill **negocio**, com a issue |
-| 2 | `console.log` esquecido | Costuma apontar (o ESLint também pega) | **CLAUDE.md** (regra 3) |
-| 3 | `calcularFrete` em camelCase, e o time usa snake_case | **Não tem como saber** | **CLAUDE.md** (regra 1) |
-| 4 | O número `100` solto, sem nome | Pode apontar | Skill **legibilidade** |
+| 1 | O total tira o frete (`total - frete`): compra de R$ 50 sai por R$ 40 | **Pega**: está no diff | Skill **bugs** (e o `npm test`) |
+| 2 | O cliente pediu frete grátis **acima de R$ 200**, e o código usa **100** | **Não tem como saber**: 100 parece um número normal | Skill **negocio**, com a issue |
+| 3 | `console.log` esquecido | Costuma apontar (o ESLint também pega) | **CLAUDE.md** (regra 3) |
+| 4 | `calcularFrete` em camelCase, e o time usa snake_case | **Não tem como saber** | **CLAUDE.md** (regra 1) |
+| 5 | O número `100` solto, sem nome | Pode apontar | Skill **legibilidade** |
 
-A IA não é determinística: o que ela devolve só aparece no ensaio. Os itens 1 e 3 são os que mostram a diferença, porque sem contexto ela não tem como saber.
+A IA não é determinística: o que ela devolve só aparece no ensaio. O item 1 mostra que o diff pega bastante coisa; os itens 2 e 4 mostram o que ele não pega, porque sem contexto ela não tem como saber.
 
 ## O que tem aqui
 
@@ -80,7 +81,7 @@ A IA não é determinística: o que ela devolve só aparece no ensaio. Os itens 
 |---|---|
 | `src/frete.js`, `src/checkout.js`, `test/` | Código "da loja": frete e total do pedido |
 | `CLAUDE.md` e `.claude/settings.json` | A base (rodada 1): regras mínimas e permissões, sem skills |
-| `demo/pr-change/src/` | O arquivo "depois" do PR (`frete.js`) |
+| `demo/pr-change/src/` | Os arquivos "depois" do PR (`frete.js` e `checkout.js`) |
 | `demo/context/` | **O contexto** (rodada 2): `CLAUDE.full.md` e `claude/` com as skills e o `/review`. Os nomes são sem ponto de propósito, pra nenhuma ferramenta ler isso antes da hora |
 | `demo/rodada1-mcp.sh` | Rodada 1 pelo link do PR: pasta vazia, só o MCP do GitHub, só o diff |
 | `demo/rodada1.sh`, `demo/rodada2.sh` | Rodada 1 com o diff local (plano B) e rodada 2 |

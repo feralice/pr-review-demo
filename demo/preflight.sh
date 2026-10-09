@@ -11,10 +11,10 @@ erro() { echo "  ERRO  $1"; falhas=$((falhas + 1)); }
 git diff --quiet HEAD -- CLAUDE.md && [ ! -e .claude/skills ] && [ ! -e .claude/commands ] \
   && ok "contexto limpo (rodada 1)" || erro "contexto da rodada 2 ainda está aqui: bash demo/reset-context.sh"
 
-[ "$(git diff --name-only main...HEAD | tr '\n' ' ')" = "src/frete.js " ] \
-  && ok "diff do PR: src/frete.js" || erro "diff main...HEAD mudou: $(git diff --name-only main...HEAD | tr '\n' ' ')"
+[ "$(git diff --name-only main...HEAD | tr '\n' ' ')" = "src/checkout.js src/frete.js " ] \
+  && ok "diff do PR: src/checkout.js e src/frete.js" || erro "diff main...HEAD mudou: $(git diff --name-only main...HEAD | tr '\n' ' ')"
 
-npm test >/dev/null 2>&1 && ok "npm test passa (o bug é de regra de negócio, o teste não pega)" || erro "npm test falhou"
+npm test >/dev/null 2>&1 && erro "npm test passou, mas deveria falhar (o total tira o frete)" || ok "npm test falha, como esperado"
 
 command -v claude >/dev/null && ok "claude $(claude --version 2>/dev/null | cut -d' ' -f1)" || erro "claude não encontrado"
 
