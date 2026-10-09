@@ -1,10 +1,10 @@
 ---
 name: bugs
-description: Use ao revisar PR pra achar erros de lógica: dado vazio ou nulo, e função que mudou e deixou quem chama pra trás.
+description: Use ao revisar PR pra achar erro de conta ou de lógica.
 ---
 
-1. Dado vazio, nulo ou zero: o código trata?
-2. Se uma função mudou (nome, parâmetros, ordem ou retorno), use Grep pra achar quem chama, inclusive fora do diff.
-3. Confira se os chamadores acompanharam. Aponte o que ficou pra trás.
+1. Faça a conta com um exemplo: o resultado faz sentido?
+2. Confira os sinais: + e -, > e <.
+3. Se uma função mudou, veja se quem usa ela ainda funciona.
 
 Não repita o que a skill negocio já apontou.
