@@ -1,10 +1,16 @@
 name: AI Review (pré-review)
 
-# Roda sozinho em todo PR. Tire "synchronize" pra revisar só quando o PR abre
-# (com "synchronize" ele revisa de novo a cada push).
+# Na demo roda só manual (Actions > AI Review > Run workflow), porque precisa do
+# segredo CLAUDE_CODE_OAUTH_TOKEN. Pra rodar sozinho em todo PR, troque por:
+#   pull_request:
+#     types: [opened, reopened, synchronize, ready_for_review]
+# e use github.event.pull_request.number no lugar de inputs.pr_number.
 on:
-  pull_request:
-    types: [opened, reopened, synchronize, ready_for_review]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: Número do PR
+        required: true
 
 permissions:
   contents: read
@@ -13,12 +19,11 @@ permissions:
   id-token: write
 
 concurrency:
-  group: ai-review-${{ github.event.pull_request.number }}
+  group: ai-review-${{ inputs.pr_number }}
   cancel-in-progress: true
 
 jobs:
   ai-review:
-    if: ${{ !github.event.pull_request.draft }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -30,7 +35,7 @@ jobs:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           prompt: |
             REPO: ${{ github.repository }}
-            PR NUMBER: ${{ github.event.pull_request.number }}
+            PR NUMBER: ${{ inputs.pr_number }}
 
             Você é um revisor sênior de backend fazendo o pré-review deste PR.
             Leia a descrição do PR e o diff (gh pr view, gh pr diff).
