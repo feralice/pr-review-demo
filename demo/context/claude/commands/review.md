@@ -1,15 +1,19 @@
 ---
-description: Revisa o diff desta branch com as skills do time e junta tudo numa tabela
-argument-hint: [número da issue com o requisito]
+description: Revisa a branch com o contexto do time (task, regras e skills) e junta tudo numa tabela
+argument-hint: [número da task (issue)]
 allowed-tools: Bash(git diff:*), Bash(gh issue view:*), Bash(npm test:*), Read, Grep, Glob
 ---
 
 Você coordena o review da branch atual contra a main.
 
-Diff: !`git diff main...HEAD`
+O que mudou (diff): !`git diff main...HEAD`
+
+Além do diff, use este contexto:
+- A task: se recebeu um número ($ARGUMENTS), leia com `gh issue view $ARGUMENTS`. É o pedido do cliente.
+- As regras do time: o CLAUDE.md.
+- O repositório: abra outros arquivos quando precisar, como os testes e quem usa o código que mudou.
 
 Passos:
-1. Se recebeu um número de issue ($ARGUMENTS), leia com `gh issue view $ARGUMENTS` e use como requisito.
-2. Aplique, uma por vez, estas skills ao diff: negocio, bugs e legibilidade.
-3. Junte tudo numa só tabela: arquivo, linha, tipo (bug, smell ou regra), skill que achou, como resolver. Não repita o mesmo achado.
-4. Termine com o nível de risco da mudança (baixo, médio ou alto) e uma frase: o que bloquearia o merge.
+1. Aplique, uma por vez, as skills negocio, bugs e legibilidade.
+2. Junte tudo numa só tabela: arquivo, linha, tipo (bug, smell ou regra), skill que achou, como resolver. Não repita o mesmo achado.
+3. Termine com o risco (baixo, médio ou alto) e uma frase: o que bloquearia o merge.
