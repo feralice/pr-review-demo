@@ -1,7 +1,8 @@
 name: CI
 
+# Sem pull_request: o PR da demo fica sem check, e o bug aparece no npm test
+# ao vivo, não no CI.
 on:
-  pull_request:
   push:
     branches: [main]
 
