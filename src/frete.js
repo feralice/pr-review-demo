@@ -1,4 +1,8 @@
 function calcularFrete(total) {
+  console.log(total);
+  if (total > 100) {
+    return 0;
+  }
   return 10;
 }
 
