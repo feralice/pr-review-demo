@@ -95,18 +95,15 @@ A IA não é determinística: o que ela devolve só aparece no ensaio. O item 1 
 | `.github/workflows/ai-review.yml` | O mesmo review numa GitHub Action (só manual, ver abaixo) |
 | `.coderabbit.yaml` | Deixa o review do CodeRabbit em português |
 
-## Rodada 3: review automático com o CodeRabbit (capítulo 5)
+## Rodada 3: review automático com um GitHub Action (capítulo 5)
 
-É a **forma 3** (no PR, sozinho). Grátis em repositório público.
+É a **forma 3** (no PR, sozinho): `.github/workflows/ai-review.yml` roda o Claude Code em todo PR, com o mesmo contexto da rodada 2 (`add-context.sh`: CLAUDE.md, skills e a issue ligada).
 
-**Ao vivo:**
-1. Ative o app: `github.com/settings/installations` > CodeRabbit > Configure > adicione o `pr-review-demo` > Save.
-2. Mostre o `.coderabbit.yaml`: idioma, revisão automática, instrução pra `src/**` e leitura das regras do time.
-3. `bash demo/open-demo-pr.sh`: abre o PR com `Closes #1`, e o CodeRabbit revisa em 2 a 5 minutos, lendo a issue.
+**Uma vez:** `claude setup-token` e `gh secret set CLAUDE_CODE_OAUTH_TOKEN` (o token da assinatura; conta no limite do plano, sem cobrança por chamada).
 
-Depois do ensaio: feche o PR e desative o app, senão ele comenta no PR da rodada 1.
+**Ao vivo:** o workflow fica desligado até a rodada 3. Mostre o arquivo, ligue em Actions > AI Review > Enable workflow (ou `gh workflow enable "AI Review (pré-review)"`) e rode `bash demo/open-demo-pr.sh`. Em 2 a 3 minutos ele comenta no PR. Depois: feche o PR e `gh workflow disable "AI Review (pré-review)"`.
 
-**Alternativa:** o Copilot faz o mesmo sob demanda (Reviewers > Copilot), se o plano tiver code review.
+**Alternativas sem pipeline próprio:** CodeRabbit (app, grátis em repo público, config em `.coderabbit.yaml`) ou Copilot (Reviewers > Copilot, se o plano tiver code review).
 
 ### Alternativa: pipeline próprio (GitHub Action com Claude)
 
@@ -139,5 +136,5 @@ Feche o PR antigo no GitHub antes. Entre um ensaio e outro, `bash demo/reset-con
 - [ ] Rodada 2 feita (`add-context.sh`, `rodada2.sh`, `/review <link> 1`), com prints
 - [ ] Testadas as 3 regras da lista (snake_case, JSDoc, aspas duplas)
 - [ ] As skills carregaram (o review cita negocio, bugs e legibilidade)
-- [ ] CodeRabbit ativado, PR aberto com `open-demo-pr.sh` e review feito, com prints (capítulo 5); depois desativado
+- [ ] AI Review ligado, PR aberto com `open-demo-pr.sh` e review do Action feito, com prints (capítulo 5); depois desligado
 - [ ] `reset-context.sh` rodado e `preflight.sh` sem erro
