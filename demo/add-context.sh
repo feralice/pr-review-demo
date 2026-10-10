@@ -14,5 +14,5 @@ echo "  CLAUDE.md (regras do time), regra 1: $(grep -m1 '^1\. ' CLAUDE.md | cut 
 for s in .claude/skills/*/; do echo "  skill: $(basename "$s")"; done
 echo "  comando: /review"
 PR_URL="$(gh pr view feat/frete-pedidos --json url --jq .url 2>/dev/null || echo "<link do PR>")"
-echo "Agora abra uma sessão NOVA: bash demo/rodada2.sh, e rode:"
+echo "Agora abra uma sessão NOVA: bash demo/rodada2-mcp.sh, e rode:"
 echo "  /review $PR_URL 1"
