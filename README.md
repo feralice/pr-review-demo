@@ -95,26 +95,21 @@ A IA não é determinística: o que ela devolve só aparece no ensaio. O item 1 
 | `.github/workflows/ai-review.yml` | O mesmo review numa GitHub Action (só manual, ver abaixo) |
 | `.coderabbit.yaml` | Deixa o review do CodeRabbit em português |
 
-## Automático (mostrado funcionando, no capítulo 5): CodeRabbit
+## Rodada 3: Copilot no PR (capítulo 5)
 
-É um **app pronto**: instala em uns 2 minutos, **sem workflow e sem chave**, e revisa todo PR sozinho. É gratuito em **repositório público** (em privado, só um teste de 14 dias). Confira o plano em coderabbit.ai/pricing.
+É a **forma 2** (no PR, sob demanda): sem instalar nada. Precisa de um plano do Copilot com code review; confira antes se ele aparece em Reviewers.
 
-**Montar (uma vez):**
-1. Deixe o repositório **público** (Settings > General > Danger Zone > Change visibility). O código da demo é inofensivo.
-2. Entre em **app.coderabbit.ai/login** com a conta do GitHub, adicione os repositórios e escolha só o `pr-review-demo`.
-3. Nada mais: ele já lê o `CLAUDE.md` da raiz (a documentação diz que detecta `CLAUDE.md`, `AGENTS.md` e `copilot-instructions.md` sozinho).
-
-**No dia (ao vivo):** ative o CodeRabbit no repo (`github.com/settings/installations` > CodeRabbit > Configure > adicione o `pr-review-demo` > Save) e abra o PR:
+**No dia (ao vivo):**
 ```bash
 bash demo/open-demo-pr.sh
 ```
-O script abre o PR no navegador. O CodeRabbit leva de 2 a 5 minutos pra comentar. No ensaio, tire prints pro plano B e depois feche o PR, pra rodar de novo.
+O script abre o PR no navegador. Na lateral do PR: **Reviewers > Copilot**. Ele comenta nas linhas em 1 a 3 minutos. No ensaio, tire prints pro plano B e depois feche o PR, pra rodar de novo.
 
-**No dia:** abra o PR no navegador e mostre o resumo e os comentários nas linhas. Se quiser rodar de novo, comente `@coderabbitai full review` no PR.
+Pra virar automático (forma 3): **Settings > Rules > Rulesets > Automatically request Copilot code review**. O Copilot lê o `.github/copilot-instructions.md` (o equivalente do `CLAUDE.md`).
 
-**Bônus (só se ensaiar):** coloque o `CLAUDE.md` completo (`demo/context/CLAUDE.full.md`) na **`main`** e comente `@coderabbitai full review`. Em repositório público, ele aplica só a configuração da branch base, então a regra precisa estar na `main`. Não confirmei se o `CLAUDE.md` segue essa mesma regra de branch: teste antes de prometer.
+**Alternativa (app pronto):** o CodeRabbit faz o mesmo de forma automática, grátis em repositório público. Ative em `github.com/settings/installations`, e desative depois do ensaio: ele comenta em todo PR, inclusive no da rodada 1.
 
-Skills e o `/review` são do Claude Code: o CodeRabbit não usa. Quem quiser mais controle, pode montar o próprio pipeline (alternativa abaixo).
+Skills e o `/review` são do Claude Code: o Copilot e o CodeRabbit não usam. Quem quiser mais controle, pode montar o próprio pipeline (alternativa abaixo).
 
 ### Alternativa: pipeline próprio (GitHub Action com Claude)
 
@@ -147,5 +142,5 @@ Feche o PR antigo no GitHub antes. Entre um ensaio e outro, `bash demo/reset-con
 - [ ] Rodada 2 feita (`add-context.sh`, `rodada2.sh`, `/review <link> 1`), com prints
 - [ ] Testadas as 3 regras da lista (snake_case, JSDoc, aspas duplas)
 - [ ] As skills carregaram (o review cita negocio, bugs e legibilidade)
-- [ ] Repositório público, CodeRabbit instalado e PR aberto com o review feito, com prints (o automático do capítulo 5)
+- [ ] Copilot aparece em Reviewers; PR aberto com `open-demo-pr.sh` e review do Copilot feito, com prints (capítulo 5)
 - [ ] `reset-context.sh` rodado e `preflight.sh` sem erro

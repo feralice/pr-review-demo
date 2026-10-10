@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Rodada 3: abre o PR (feat/ajuste-frete -> main) ao vivo, e o CodeRabbit
-# revisa sozinho. Ative o CodeRabbit no repo antes de rodar.
+# Rodada 3: abre o PR (feat/ajuste-frete -> main) ao vivo. Depois, no PR:
+# Reviewers > Copilot.
 # Pra ensaiar de novo: feche o PR no GitHub e rode outra vez.
 # Requer: git e GitHub CLI (gh) logado, com o repositório já no GitHub.
 set -e
