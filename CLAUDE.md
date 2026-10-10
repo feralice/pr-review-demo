@@ -1,3 +1,8 @@
-# Projeto de demonstração
+# Regras de review do time
 
-Node.js, sem dependências. Funções de frete e checkout de uma loja.
+Projeto pequeno de demonstração (Node.js, sem dependências).
+
+1. Nomes de função em snake_case
+2. Toda função nova tem teste
+
+Pra review completo, use o comando /review: ele junta as skills negocio, bugs e legibilidade.

@@ -48,8 +48,9 @@ Anote o que ela **não** apontou. Rode `npm test`: falha o do checkout (o total 
 **Rodada 2: com contexto**
 1. A turma escolhe a regra 1 (voto de mão): **snake_case**, **JSDoc em toda função** ou **aspas duplas**. Se ninguém escolher, vai de snake_case.
 2. `bash demo/add-context.sh "Toda função tem JSDoc"` copia o `CLAUDE.md` completo, as 3 skills e o comando `/review`, e põe a regra da turma no lugar da regra 1. Sem argumento, fica snake_case.
-3. Abra uma sessão **nova**: `bash demo/rodada2.sh`. Rode `/review 1` (o `1` é a issue com o requisito).
-4. Compare com a rodada 1.
+3. Mostre a task no navegador: a issue #1 (`github.com/feralice/pr-review-demo/issues/1`), que pede frete grátis **acima de R$ 200**.
+4. Abra uma sessão **nova**: `bash demo/rodada2.sh`. Rode `/review 1` (o `1` é a issue com o requisito).
+5. Compare com a rodada 1.
 
 Pra repetir o ensaio: `bash demo/reset-context.sh` (volta pra rodada 1).
 
