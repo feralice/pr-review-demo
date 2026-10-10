@@ -1,7 +1,7 @@
 name: AI Review (pré-review)
 
-# Review automático: todo PR aberto ou atualizado roda o mesmo /review da
-# rodada 2, com o contexto do time (CLAUDE.md, skills e a issue ligada ao PR).
+# Review automático: todo PR aberto ou atualizado segue a receita do /review
+# da rodada 2 (.claude/commands/review.md), com o contexto do time (CLAUDE.md, skills e a issue ligada ao PR).
 # Precisa do segredo CLAUDE_CODE_OAUTH_TOKEN (claude setup-token).
 on:
   pull_request:
@@ -33,7 +33,10 @@ jobs:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
           prompt: |
-            /review ${{ github.event.pull_request.html_url }}
+            Siga a receita de .claude/commands/review.md, a mesma do /review da rodada 2,
+            para este PR: ${{ github.event.pull_request.html_url }}
+            A task é a issue citada na descrição do PR (ex.: Closes #1): leia com gh issue view.
+            Leia o CLAUDE.md e aplique as skills de .claude/skills (negocio, bugs, legibilidade).
 
             Depois, publique no PR: cada bug como comentário inline (arquivo e linha)
             e a tabela como comentário. Você não aprova nem bloqueia: quem decide é o humano.
