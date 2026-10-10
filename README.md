@@ -58,7 +58,7 @@ Pra repetir o ensaio: `bash demo/reset-context.sh` (volta pra rodada 1).
 
 | Contexto | O que é | Pega |
 |---|---|---|
-| **1 · Regras do time** (`CLAUDE.md`) | O que só o time decide | snake_case, função sem teste |
+| **1 · Regras do time** (`CLAUDE.md`) | O que só o time decide | snake_case (ou a regra que a turma escolher) |
 | **2 · Skills** (`.claude/skills/`) | `negocio`, `bugs`, `legibilidade` | número solto, valor contra o requisito |
 | **3 · Requisito** | A issue #1 do GitHub (`/review <link> 1`) | `100` no código contra "acima de R$ 200" na issue |
 
