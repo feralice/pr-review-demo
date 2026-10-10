@@ -93,7 +93,6 @@ A IA não é determinística: o que ela devolve só aparece no ensaio. O item 1 
 | `demo/context/issue-requisito.md` | O texto da issue #1 |
 | `templates/arquivo-de-instrucoes.md` | Modelo do arquivo de instruções (vai por e-mail) |
 | `.github/workflows/ai-review.yml` | O mesmo review numa GitHub Action (só manual, ver abaixo) |
-| `.coderabbit.yaml` | Deixa o review do CodeRabbit em português |
 
 ## Rodada 3: review automático com um GitHub Action (capítulo 5)
 
@@ -103,7 +102,7 @@ A IA não é determinística: o que ela devolve só aparece no ensaio. O item 1 
 
 **Ao vivo:** o workflow fica desligado até a rodada 3. Mostre o arquivo, ligue em Actions > AI Review > Enable workflow (ou `gh workflow enable "AI Review (pré-review)"`) e rode `bash demo/open-demo-pr.sh`. Em 2 a 3 minutos ele comenta no PR. Depois: feche o PR e `gh workflow disable "AI Review (pré-review)"`.
 
-**Alternativas sem pipeline próprio:** CodeRabbit (app, grátis em repo público, config em `.coderabbit.yaml`) ou Copilot (Reviewers > Copilot, se o plano tiver code review).
+**Alternativas sem pipeline próprio:** CodeRabbit (app, grátis em repo público) ou Copilot (Reviewers > Copilot, se o plano tiver code review).
 
 ### Alternativa: pipeline próprio (GitHub Action com Claude)
 
