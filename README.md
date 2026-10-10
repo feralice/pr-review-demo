@@ -57,7 +57,7 @@ Pra repetir o ensaio: `bash demo/reset-context.sh` (volta pra rodada 1).
 
 | Contexto | O que é | Pega |
 |---|---|---|
-| **1 · Regras do time** (`CLAUDE.md`) | O que só o time decide | `console.log`, snake_case |
+| **1 · Regras do time** (`CLAUDE.md`) | O que só o time decide | snake_case, função sem teste |
 | **2 · Skills** (`.claude/skills/`) | `negocio`, `bugs`, `legibilidade` | número solto, valor contra o requisito |
 | **3 · Requisito** | A issue #1 do GitHub (`/review 1`) | `100` no código contra "acima de R$ 200" na issue |
 
@@ -70,7 +70,7 @@ O PR muda `src/frete.js` (frete grátis acima de R$ 100) e `src/checkout.js` (o 
 | 1 | O total tira o frete (`total - frete`): compra de R$ 50 sai por R$ 40 | **Pega**: está no diff | Skill **bugs** (e o `npm test`) |
 | 2 | O `recibo.js`, **fora do diff**, espera frete de R$ 10: com o frete grátis, mostra "Erro no frete" | No máximo "verifique quem usa" | Skill **bugs** (item 3), que abre o `recibo.js` |
 | 3 | O cliente pediu frete grátis **acima de R$ 200**, e o código usa **100** | **Não tem como saber**: 100 parece um número normal | Skill **negocio**, com a issue |
-| 4 | `console.log` esquecido | Costuma apontar (o ESLint também pega) | **CLAUDE.md** (regra 3) |
+| 4 | `console.log` esquecido | Costuma apontar | Fica pro **linter** (ESLint `no-console`), não pra IA |
 | 5 | `calcularFrete` em camelCase, e o time usa snake_case | **Não tem como saber** | **CLAUDE.md** (regra 1) |
 | 6 | O número `100` solto, sem nome | Pode apontar | Skill **legibilidade** |
 
