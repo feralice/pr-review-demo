@@ -21,7 +21,7 @@ trap 'rm -rf "$VAZIA"' EXIT
 cp CLAUDE.md "$VAZIA/"
 mkdir -p "$VAZIA/.claude" && cp -r .claude/skills .claude/commands "$VAZIA/.claude/"
 cat > "$VAZIA/.mcp-rodada2.json" <<JSON
-{"mcpServers":{"github":{"type":"http","url":"https://api.githubcopilot.com/mcp/","headers":{"Authorization":"Bearer $TOKEN","X-MCP-Readonly":"true","X-MCP-Tools":"pull_request_read,issue_read,get_file_contents,search_code"}}}}
+{"mcpServers":{"github":{"type":"http","url":"https://api.githubcopilot.com/mcp/","headers":{"Authorization":"Bearer $TOKEN","X-MCP-Readonly":"true","X-MCP-Tools":"pull_request_read,issue_read,get_file_contents"}}}}
 JSON
 
 echo "Pasta só com o contexto do time: $VAZIA"
