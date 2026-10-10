@@ -1,7 +1,7 @@
-const { calcular_frete } = require('./frete');
+const { calcularFrete } = require('./frete');
 
 function calcularTotal(total) {
-  return total - calcular_frete(total);
+  return total - calcularFrete(total);
 }
 
 module.exports = { calcularTotal };
