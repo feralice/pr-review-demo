@@ -41,7 +41,7 @@ O link é o do PR da `feat/frete-pedidos`, aberto com o CodeRabbit **desativado*
 
 O script abre o `claude` numa **pasta vazia**, sem Read/Grep/Bash, só com o MCP do GitHub em modo leitura e expondo uma única ferramenta, o `pull_request_read`: o diff. Quando ela pedir permissão pra ele, aprove e mostre na tela que ela foi buscar só o diff.
 
-Anote o que ela **não** apontou. Rode `npm test`: falha (esperava 60, veio 40), por causa do bug 1. O bug 2 o teste não pega.
+Anote o que ela **não** apontou. Rode `npm test`: os 2 testes falham (o total dá 40 em vez de 60, e o recibo quebra). O 100 contra 200 o teste não pega.
 
 **Plano B (sem rede ou sem MCP):** `bash demo/rodada1.sh`, que é `git diff main...HEAD | claude -p "Revise este diff: bugs e code smells." --tools ""`. Mesmo resultado, com o diff local.
 
@@ -63,17 +63,18 @@ Pra repetir o ensaio: `bash demo/reset-context.sh` (volta pra rodada 1).
 
 ## O que está plantado no PR
 
-O PR muda duas linhas de lógica: em `src/frete.js`, compra acima de R$ 100 passa a ter frete grátis; em `src/checkout.js`, o total passa a **tirar** o frete em vez de somar.
+O PR muda `src/frete.js` (frete grátis acima de R$ 100, e a função vira `calcular_frete`) e `src/checkout.js` (o total passa a **tirar** o frete e usa o nome novo). O `src/recibo.js` fica de fora do PR e ainda chama `calcularFrete`.
 
 | # | Problema | Rodada 1 (só o diff) | Rodada 2: quem pega |
 |---|---|---|---|
 | 1 | O total tira o frete (`total - frete`): compra de R$ 50 sai por R$ 40 | **Pega**: está no diff | Skill **bugs** (e o `npm test`) |
-| 2 | O cliente pediu frete grátis **acima de R$ 200**, e o código usa **100** | **Não tem como saber**: 100 parece um número normal | Skill **negocio**, com a issue |
-| 3 | `console.log` esquecido | Costuma apontar (o ESLint também pega) | **CLAUDE.md** (regra 3) |
-| 4 | `calcularFrete` em camelCase, e o time usa snake_case | **Não tem como saber** | **CLAUDE.md** (regra 1) |
-| 5 | O número `100` solto, sem nome | Pode apontar | Skill **legibilidade** |
+| 2 | O `recibo.js`, **fora do diff**, ainda chama `calcularFrete`, que deixou de existir: o recibo quebra | No máximo "verifique quem usa" | Skill **bugs** (item 3), que abre o `recibo.js` |
+| 3 | O cliente pediu frete grátis **acima de R$ 200**, e o código usa **100** | **Não tem como saber**: 100 parece um número normal | Skill **negocio**, com a issue |
+| 4 | `console.log` esquecido | Costuma apontar (o ESLint também pega) | **CLAUDE.md** (regra 3) |
+| 5 | `calcularTotal` em camelCase, e o time usa snake_case | **Não tem como saber** | **CLAUDE.md** (regra 1) |
+| 6 | O número `100` solto, sem nome | Pode apontar | Skill **legibilidade** |
 
-A IA não é determinística: o que ela devolve só aparece no ensaio. O item 1 mostra que o diff pega bastante coisa; os itens 2 e 4 mostram o que ele não pega, porque sem contexto ela não tem como saber.
+A IA não é determinística: o que ela devolve só aparece no ensaio. O item 1 mostra que o diff pega bastante coisa. O 2 está num arquivo fora do diff, e o 3 só existe na task: sem contexto, ela não tem como saber.
 
 ## O que tem aqui
 

@@ -1,4 +1,4 @@
-function calcularFrete(total) {
+function calcular_frete(total) {
   console.log(total);
   if (total > 100) {
     return 0;
@@ -6,4 +6,4 @@ function calcularFrete(total) {
   return 10;
 }
 
-module.exports = { calcularFrete };
+module.exports = { calcular_frete };
