@@ -23,6 +23,7 @@ if gh auth status >/dev/null 2>&1; then
   [ "$(gh issue view 1 --json state --jq .state 2>/dev/null)" = OPEN ] && ok "issue #1 aberta" || erro "issue #1 não está aberta"
   [ "$(gh pr list --head feat/ajuste-frete --state open --json number --jq length 2>/dev/null)" = 0 ] && ok "nenhum PR aberto da feat/ajuste-frete (a rodada 3 abre ao vivo)" || erro "já tem PR aberto da feat/ajuste-frete: feche antes da rodada 3"
   [ "$(gh pr view feat/frete-pedidos --json state --jq .state 2>/dev/null)" = OPEN ] && ok "PR da rodada 1 aberto" || erro "PR da feat/frete-pedidos não está aberto"
+  gh workflow list --all 2>/dev/null | grep -q "AI Review.*disabled" && ok "AI Review desligado (a rodada 3 liga ao vivo)" || erro "AI Review ligado: desligue com gh workflow disable \"AI Review (pré-review)\""
   [ "$(gh pr view feat/frete-pedidos --json comments,reviews --jq '[.comments[],.reviews[]] | length' 2>/dev/null)" = 0 ] && ok "PR da rodada 1 sem comentários" || erro "PR da rodada 1 tem comentário ou review: a IA vai copiar"
 else
   erro "gh sem login: gh auth login"
