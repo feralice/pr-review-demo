@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Rodada 3: abre o PR (feat/ajuste-frete -> main) ao vivo. Depois, no PR:
-# Reviewers > Copilot.
+# Rodada 3: abre o PR (feat/ajuste-frete -> main) ao vivo, ligado à issue #1
+# (Closes #1), e o CodeRabbit revisa sozinho. Ative o CodeRabbit no repo antes.
 # Pra ensaiar de novo: feche o PR no GitHub e rode outra vez.
 # Requer: git e GitHub CLI (gh) logado, com o repositório já no GitHub.
 set -e
@@ -15,7 +15,7 @@ git update-ref refs/heads/feat/ajuste-frete "$NOVO"
 git push -q --force origin feat/ajuste-frete
 URL="$(gh pr create --base main --head feat/ajuste-frete \
   --title "feat: frete grátis para compras grandes" \
-  --body-file demo/pr-description.md)"
+  --body-file demo/context/pr-description-com-requisito.md)"
 echo "$URL"
 # WSL não tem navegador próprio: abre no do Windows
 command -v explorer.exe >/dev/null && explorer.exe "$URL" || true

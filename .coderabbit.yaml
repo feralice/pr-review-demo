@@ -1,4 +1,12 @@
+# Review automático: o CodeRabbit lê este arquivo e revisa todo PR sozinho.
 language: pt-BR
 reviews:
   auto_review:
-    drafts: false
+    enabled: true   # revisa assim que o PR abre
+    drafts: false   # ignora PR em rascunho
+  path_instructions:
+    - path: "src/**"
+      instructions: "Confira valores e limites de frete contra a issue ligada ao PR."
+knowledge_base:
+  code_guidelines:
+    enabled: true   # lê as regras do time (CLAUDE.md, AGENTS.md)
