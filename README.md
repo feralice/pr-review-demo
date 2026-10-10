@@ -49,7 +49,7 @@ Anote o que ela **não** apontou. Rode `npm test`: falha o do checkout (o total 
 1. A turma escolhe a regra 1 (voto de mão): **snake_case**, **JSDoc em toda função** ou **aspas duplas**. Se ninguém escolher, vai de snake_case.
 2. `bash demo/add-context.sh "Toda função tem JSDoc"` copia o `CLAUDE.md` completo, as 3 skills e o comando `/review`, e põe a regra da turma no lugar da regra 1. Sem argumento, fica snake_case.
 3. Mostre a task no navegador: a issue #1 (`github.com/feralice/pr-review-demo/issues/1`), que pede frete grátis **acima de R$ 200**.
-4. Abra uma sessão **nova**: `bash demo/rodada2.sh`. Rode `/review 1` (o `1` é a issue com o requisito).
+4. Abra uma sessão **nova**: `bash demo/rodada2.sh`. Rode `/review <link do PR> 1`: o mesmo link da rodada 1, e o `1` é a issue com o requisito.
 5. Compare com a rodada 1.
 
 Pra repetir o ensaio: `bash demo/reset-context.sh` (volta pra rodada 1).
@@ -60,7 +60,7 @@ Pra repetir o ensaio: `bash demo/reset-context.sh` (volta pra rodada 1).
 |---|---|---|
 | **1 · Regras do time** (`CLAUDE.md`) | O que só o time decide | snake_case, função sem teste |
 | **2 · Skills** (`.claude/skills/`) | `negocio`, `bugs`, `legibilidade` | número solto, valor contra o requisito |
-| **3 · Requisito** | A issue #1 do GitHub (`/review 1`) | `100` no código contra "acima de R$ 200" na issue |
+| **3 · Requisito** | A issue #1 do GitHub (`/review <link> 1`) | `100` no código contra "acima de R$ 200" na issue |
 
 ## O que está plantado no PR
 
@@ -144,7 +144,7 @@ Feche o PR antigo no GitHub antes. Entre um ensaio e outro, `bash demo/reset-con
 - [ ] `GITHUB_PAT` criado e exportado; `bash demo/rodada1-mcp.sh` abre e o `pull_request_read` aparece
 - [ ] Rodada 1 feita pelo link do PR (2 vezes, sessão nova), sem citar o R$ 200, com prints
 - [ ] Plano B testado: `bash demo/rodada1.sh`
-- [ ] Rodada 2 feita (`add-context.sh`, `rodada2.sh`, `/review 1`), com prints
+- [ ] Rodada 2 feita (`add-context.sh`, `rodada2.sh`, `/review <link> 1`), com prints
 - [ ] Testadas as 3 regras da lista (snake_case, JSDoc, aspas duplas)
 - [ ] As skills carregaram (o review cita negocio, bugs e legibilidade)
 - [ ] Repositório público, CodeRabbit instalado e PR aberto com o review feito, com prints (o automático do capítulo 5)
